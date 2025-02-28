@@ -100,6 +100,9 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             text-align: center;
             padding: 20px;
+            display: block;
+            text-decoration: none;
+            color: inherit;
         }
 
         .tool-card:hover {
@@ -123,22 +126,6 @@
             font-size: 1rem;
             color: #555;
             margin: 0;
-        }
-
-        .tool-card a {
-            display: inline-block;
-            margin-top: 15px;
-            padding: 10px 20px;
-            background: linear-gradient(135deg, #007bff, #0056b3);
-            color: #fff;
-            text-decoration: none;
-            border-radius: 50px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .tool-card a:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
         }
 
         /* Footer */
@@ -225,34 +212,30 @@
         <!-- Tools Section -->
         <section id="tools">
             <!-- Image Tools -->
-            <div class="tool-card">
+            <a href="/img-compress.html" class="tool-card">
                 <i class="fas fa-file-image"></i>
                 <h3>Image Compressor</h3>
                 <p>Compress your images without losing quality.</p>
-                <a href="/img-compress.html">Use Tool</a>
-            </div>
+            </a>
 
-            <div class="tool-card">
+            <a href="#" class="tool-card">
                 <i class="fas fa-exchange-alt"></i>
                 <h3>Image Converter</h3>
                 <p>Convert images to different formats like JPG, PNG, and more.</p>
-                <a href="#">Use Tool</a>
-            </div>
+            </a>
 
             <!-- PDF Tools -->
-            <div class="tool-card">
+            <a href="#" class="tool-card">
                 <i class="fas fa-file-pdf"></i>
                 <h3>PDF Compressor</h3>
                 <p>Reduce the size of your PDF files easily.</p>
-                <a href="#">Use Tool</a>
-            </div>
+            </a>
 
-            <div class="tool-card">
+            <a href="#" class="tool-card">
                 <i class="fas fa-file-word"></i>
                 <h3>PDF to Word</h3>
                 <p>Convert PDF files to editable Word documents.</p>
-                <a href="#">Use Tool</a>
-            </div>
+            </a>
 
             <!-- Add more tools as needed -->
         </section>
