@@ -1,1 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Compressor | Smart File Size Reduction</title>
+    <meta name="description" content="Compress PDF files online with adjustable quality settings. Reduce PDF size for email or web use while maintaining readability.">
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #60a5fa;
+            --background: #f8fafc;
+            --text: #1e293b;
+        }
 
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--background);
+            margin: 0;
+            padding: 0;
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 1.5rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .file-drop-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: 1rem;
+            padding: 4rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .file-drop-area:hover {
+            border-color: var(--primary);
+            background: #f0f5ff;
+        }
+
+        .compression-controls {
+            margin: 2rem 0;
+            background: #f8fafc;
+            padding: 2rem;
+            border-radius: 0.75rem;
+        }
+
+        .compression-level {
+            display: flex;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .compression-option {
+            flex: 1;
+            min-width: 250px;
+            padding: 1.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .compression-option.active {
+            border-color: var(--primary);
+            background: #eff6ff;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-preview {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 0.75rem;
+            margin: 1rem 0;
+        }
+
+        .replace-btn {
+            background: none;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 0.5rem 1rem;
+            margin-left: auto;
+            cursor: pointer;
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            .compression-option {
+                flex: 100%;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1 style="color: white;">PDF Compressor</h1>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="file-drop-area" id="dropZone">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            <h3>Drag & Drop PDF Files</h3>
+            <p>or click to browse files</p>
+            <input type="file" id="fileInput" accept=".pdf" hidden>
+        </div>
+
+        <div id="fileInfo"></div>
+
+        <div class="compression-controls">
+            <h3>Compression Level</h3>
+            <div class="compression-level">
+                <div class="compression-option active" data-level="low">
+                    <h4>Low Compression</h4>
+                    <p>Best quality preservation</p>
+                </div>
+                <div class="compression-option" data-level="medium">
+                    <h4>Medium Compression</h4>
+                    <p>Balanced quality & size</p>
+                </div>
+                <div class="compression-option" data-level="high">
+                    <h4>High Compression</h4>
+                    <p>Maximum size reduction</p>
+                </div>
+            </div>
+
+            <!-- Progress Bar and Buttons -->
+            <div style="margin-top: 1rem;">
+                <div class="progress-bar" id="progressBar" style="display: none; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin-bottom: 1rem;">
+                    <div class="progress-fill" style="height: 100%; background: var(--primary); width: 0%; transition: width 0.3s;"></div>
+                </div>
+                <button id="compressBtn" onclick="compressPDF()">Compress Now</button>
+                <a id="downloadBtn" style="display: none; background: #22c55e; color: white; padding: 1rem 2rem; border-radius: 0.75rem; text-decoration: none; margin-top: 1rem;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="vertical-align: middle;">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    Download PDF
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Compression Level Selection
+        let selectedLevel = 'low';
+        const options = document.querySelectorAll('.compression-option');
+        
+        options.forEach(option => {
+            option.addEventListener('click', () => {
+                options.forEach(o => o.classList.remove('active'));
+                option.classList.add('active');
+                selectedLevel = option.dataset.level;
+            });
+        });
+
+        // File Handling
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+
+        dropZone.addEventListener('click', () => fileInput.click());
+        
+        fileInput.addEventListener('change', (e) => {
+            if(e.target.files.length) handleFiles(e.target.files);
+        });
+
+        // Drag and Drop
+        dropZone.addEventListener('dragover', (e) => e.preventDefault());
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            handleFiles(e.dataTransfer.files);
+        });
+
+        function handleFiles(files) {
+            const file = files[0];
+            if(file?.type === 'application/pdf') {
+                displayFileInfo(file);
+            } else {
+                alert('Please select a valid PDF file!');
+            }
+        }
+
+        function displayFileInfo(file) {
+            document.getElementById('fileInfo').innerHTML = `
+                <div class="file-preview">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--primary)">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+                        <path d="M14 3v5h5M12 18v-6M9 15h6"/>
+                    </svg>
+                    <div>
+                        <p>${file.name}</p>
+                        <small>${(file.size/1024/1024).toFixed(2)} MB</small>
+                    </div>
+                    <button class="replace-btn" onclick="clearFile()">Replace File</button>
+                </div>
+            `;
+        }
+
+        function clearFile() {
+            fileInput.value = '';
+            document.getElementById('fileInfo').innerHTML = '';
+            dropZone.innerHTML = `
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                <h3>Drag & Drop PDF Files</h3>
+                <p>or click to browse files</p>
+            `;
+        }
+
+        async function compressPDF() {
+            const file = fileInput.files[0];
+            if(!file) return alert('Please select a PDF file first!');
+
+            // Show progress bar
+            const progressBar = document.getElementById('progressBar');
+            const progressFill = progressBar.querySelector('.progress-fill');
+            progressBar.style.display = 'block';
+
+            // Simulate compression progress
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                progressFill.style.width = `${progress}%`;
+                if (progress >= 100) {
+                    clearInterval(interval);
+
+                    // Show download button
+                    const compressBtn = document.getElementById('compressBtn');
+                    const downloadBtn = document.getElementById('downloadBtn');
+                    compressBtn.style.display = 'none';
+                    downloadBtn.style.display = 'inline-block';
+
+                    // Create download link
+                    const compressedBlob = new Blob([file], { type: 'application/pdf' });
+                    const downloadUrl = URL.createObjectURL(compressedBlob);
+                    downloadBtn.href = downloadUrl;
+                    downloadBtn.download = `compressed_${selectedLevel}_${file.name}`;
+
+                    // Cleanup memory
+                    downloadBtn.addEventListener('click', () => {
+                        setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+                    });
+                }
+            }, 300);
+        }
+    </script>
+</body>
+</html>
