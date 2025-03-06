@@ -1,1 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Convert your images to different formats like JPEG, PNG, WebP, and more. Optimize your images for web use with our free online tool.">
+    <meta name="keywords" content="image converter, image optimization, JPEG, PNG, WebP, online image tool">
+    <meta name="author" content="Your Name">
+    <title>Image Converter Tool - Convert & Optimize Images Online</title>
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_AD_CLIENT_ID" crossorigin="anonymous"></script>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #0f0f0f;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
 
+        /* Particle Animation Background */
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #0f0f0f;
+            z-index: -1;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            z-index: 1;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            margin: 0;
+            background: linear-gradient(90deg, #ff007f, #00ffcc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 2s infinite alternate;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            margin: 0.5rem 0 0;
+            color: #ccc;
+        }
+
+        main {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            z-index: 1;
+            animation: float 4s infinite ease-in-out;
+        }
+
+        #converter {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        #imageInput {
+            display: none;
+        }
+
+        .upload-label {
+            background: linear-gradient(135deg, #ff007f, #00ffcc);
+            color: #fff;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            font-weight: bold;
+        }
+
+        .upload-label:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 0, 127, 0.5);
+        }
+
+        /* File Name Display */
+        #fileName {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        #fileName span {
+            color: #00ffcc;
+            font-weight: bold;
+        }
+
+        #fileName button {
+            background: none;
+            border: none;
+            color: #ff007f;
+            cursor: pointer;
+            margin-left: 0.5rem;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        #fileName button:hover {
+            color: #00ffcc;
+        }
+
+        /* Updated Select Dropdown Styles */
+        #formatSelect {
+            padding: 0.8rem;
+            border-radius: 10px;
+            border: 2px solid #00ffcc;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300ffcc'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+        }
+
+        #formatSelect option {
+            background: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            padding: 10px;
+        }
+
+        #formatSelect option:hover {
+            background: #00ffcc !important;
+            color: #000 !important;
+        }
+
+        #convertButton {
+            background: linear-gradient(135deg, #00ffcc, #ff007f);
+            color: #fff;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #convertButton:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+        }
+
+        #output {
+            margin-top: 1.5rem;
+        }
+
+        #output a {
+            color: #00ffcc;
+            text-decoration: none;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            display: inline-block;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #output a:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+        }
+
+        #advertisement {
+            margin-top: 2rem;
+        }
+
+        .ad-unit {
+            margin: 0 auto;
+            max-width: 728px;
+        }
+
+        footer {
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            text-align: center;
+            color: #ccc;
+        }
+
+        /* Animations */
+        @keyframes glow {
+            0% { text-shadow: 0 0 10px #ff007f, 0 0 20px #ff007f, 0 0 30px #ff007f; }
+            100% { text-shadow: 0 0 20px #00ffcc, 0 0 30px #00ffcc, 0 0 40px #00ffcc; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+    <!-- Particles.js Library -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+</head>
+<body>
+    <!-- Particle Animation Background -->
+    <div id="particles-js"></div>
+
+    <header>
+        <h1>Image Converter Tool</h1>
+        <p>Convert and optimize your images for web use.</p>
+    </header>
+
+    <main>
+        <!-- Image Converter Section -->
+        <section id="converter">
+            <label for="imageInput" class="upload-label">Upload Image</label>
+            <input type="file" id="imageInput" accept="image/*">
+            <div id="fileName"></div>
+            <select id="formatSelect">
+                <option value="jpeg">JPEG</option>
+                <option value="png">PNG</option>
+                <option value="webp">WebP</option>
+                <option value="gif">GIF</option>
+            </select>
+            <button id="convertButton">Convert</button>
+            <div id="output"></div>
+        </section>
+
+        <!-- Advertisement Section -->
+        <section id="advertisement">
+            <div class="ad-unit">
+                <!-- Google AdSense Ad Unit -->
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-YOUR_AD_CLIENT_ID"
+                     data-ad-slot="YOUR_AD_SLOT_ID"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Image Converter Tool. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // JavaScript for Image Conversion
+        const fileInput = document.getElementById('imageInput');
+        const fileNameDisplay = document.getElementById('fileName');
+
+        // Display file name when a file is selected
+        fileInput.addEventListener('change', function() {
+            if (fileInput.files.length > 0) {
+                const fileName = fileInput.files[0].name;
+                fileNameDisplay.innerHTML = `Selected File: <span>${fileName}</span> <button onclick="openFileDialog()">Change</button>`;
+            }
+        });
+
+        // Open file dialog when clicking "Change"
+        function openFileDialog() {
+            fileInput.value = ''; // Clear previous file
+            fileInput.click(); // Open file dialog
+        }
+
+        // Convert image
+        document.getElementById('convertButton').addEventListener('click', function() {
+            const formatSelect = document.getElementById('formatSelect');
+            const outputDiv = document.getElementById('output');
+
+            if (fileInput.files.length === 0) {
+                alert('Please select an image file.');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const format = formatSelect.value;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.src = e.target.result;
+
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+
+                    canvas.toBlob(function(blob) {
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `converted_image.${format}`;
+                        a.textContent = `Download ${format.toUpperCase()} Image`;
+                        outputDiv.innerHTML = '';
+                        outputDiv.appendChild(a);
+                    }, `image/${format}`, 0.9);
+                };
+            };
+
+            reader.readAsDataURL(file);
+        });
+
+        // Initialize Particles.js
+        particlesJS.load('particles-js', 'particles.json', function() {
+            console.log('Particles.js loaded!');
+        });
+    </script>
+</body>
+</html>
