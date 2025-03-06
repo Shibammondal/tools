@@ -22,12 +22,12 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            overflow: auto; /* Allow scrolling */
         }
 
         /* Particle Animation Background */
         #particles-js {
-            position: absolute;
+            position: fixed; /* Fixed background */
             width: 100%;
             height: 100%;
             background: #0f0f0f;
@@ -43,9 +43,8 @@
         header h1 {
             font-size: 3rem;
             margin: 0;
-            background: linear-gradient(90deg, #ff007f, #00ffcc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #fff; /* Solid white color for better visibility */
+            text-shadow: 0 0 10px #ff007f, 0 0 20px #ff007f, 0 0 30px #ff007f; /* Neon glow effect */
             animation: glow 2s infinite alternate;
         }
 
@@ -66,6 +65,7 @@
             text-align: center;
             z-index: 1;
             animation: float 4s infinite ease-in-out;
+            margin: 2rem 0; /* Add margin for spacing */
         }
 
         #converter {
@@ -78,44 +78,60 @@
             display: none;
         }
 
-        .upload-label {
-            background: linear-gradient(135deg, #ff007f, #00ffcc);
-            color: #fff;
-            padding: 1rem 2rem;
+        /* Drag-and-Drop Area */
+        #dropArea {
+            border: 2px dashed #00ffcc;
             border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
             cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            font-weight: bold;
+            transition: background 0.3s ease;
+            position: relative;
+            min-height: 80px; /* Reduced size */
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .upload-label:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(255, 0, 127, 0.5);
+        #dropArea.dragover {
+            background: rgba(0, 255, 204, 0.1);
         }
 
-        /* File Name Display */
-        #fileName {
-            margin-top: 1rem;
+        #dropArea p {
+            margin: 0;
             font-size: 0.9rem;
             color: #ccc;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        #fileName span {
+        #dropArea p::before {
+            content: "+";
+            font-size: 1.5rem;
             color: #00ffcc;
             font-weight: bold;
         }
 
-        #fileName button {
+        #dropArea span {
+            color: #00ffcc;
+            font-weight: bold;
+        }
+
+        #dropArea button {
             background: none;
             border: none;
             color: #ff007f;
             cursor: pointer;
-            margin-left: 0.5rem;
             font-weight: bold;
             transition: color 0.3s ease;
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
         }
 
-        #fileName button:hover {
+        #dropArea button:hover {
             color: #00ffcc;
         }
 
@@ -196,10 +212,12 @@
         }
 
         footer {
-            margin-top: 2rem;
-            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
             text-align: center;
             color: #ccc;
+            width: 100%;
+            margin-top: auto; /* Sticky footer */
         }
 
         /* Animations */
@@ -228,9 +246,10 @@
     <main>
         <!-- Image Converter Section -->
         <section id="converter">
-            <label for="imageInput" class="upload-label">Upload Image</label>
-            <input type="file" id="imageInput" accept="image/*">
-            <div id="fileName"></div>
+            <input type="file" id="imageInput" accept="image/*" capture="environment">
+            <div id="dropArea">
+                <p><span>Drag & Drop your image here or click to select</span></p>
+            </div>
             <select id="formatSelect">
                 <option value="jpeg">JPEG</option>
                 <option value="png">PNG</option>
@@ -265,23 +284,51 @@
     <script>
         // JavaScript for Image Conversion
         const fileInput = document.getElementById('imageInput');
-        const fileNameDisplay = document.getElementById('fileName');
+        const dropArea = document.getElementById('dropArea');
+        const dropText = dropArea.querySelector('p');
 
-        // Display file name when a file is selected
-        fileInput.addEventListener('change', function() {
-            if (fileInput.files.length > 0) {
-                const fileName = fileInput.files[0].name;
-                fileNameDisplay.innerHTML = `Selected File: <span>${fileName}</span> <button onclick="openFileDialog()">Change</button>`;
+        // Open file dialog when clicking the drop area
+        dropArea.addEventListener('click', () => fileInput.click());
+
+        // Drag-and-Drop Support
+        dropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropArea.classList.add('dragover');
+        });
+
+        dropArea.addEventListener('dragleave', () => {
+            dropArea.classList.remove('dragover');
+        });
+
+        dropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                updateDropArea(files[0].name);
             }
         });
 
-        // Open file dialog when clicking "Change"
-        function openFileDialog() {
-            fileInput.value = ''; // Clear previous file
-            fileInput.click(); // Open file dialog
+        // File Input Change
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                updateDropArea(fileInput.files[0].name);
+            }
+        });
+
+        // Update Drop Area with File Name and Change Button
+        function updateDropArea(fileName) {
+            dropText.innerHTML = `Selected File: <span>${fileName}</span> <button onclick="clearFile()">Change</button>`;
         }
 
-        // Convert image
+        // Clear File Input and Reset Drop Area
+        function clearFile() {
+            fileInput.value = '';
+            dropText.innerHTML = '<span>Drag & Drop your image here or click to select</span>';
+        }
+
+        // Convert Image
         document.getElementById('convertButton').addEventListener('click', function() {
             const formatSelect = document.getElementById('formatSelect');
             const outputDiv = document.getElementById('output');
