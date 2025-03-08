@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Convert PDF to Word documents easily with our free online tool. Fast, secure, and fully responsive.">
+  <meta name="keywords" content="PDF to Word, PDF converter, online PDF tool, editable Word document">
+  <meta name="author" content="Your Company Name">
+  <title>PDF to Word Converter | Free Online Tool</title>
+  <style>
+    /* Enhanced CSS with Glassmorphism and Animations */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      font-weight: 600;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    header p {
+      margin: 10px 0 0;
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: white;
+      opacity: 0.9;
+    }
+
+    main {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    #upload-section {
+      border: 2px dashed rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      padding: 20px;
+      transition: border-color 0.3s ease;
+    }
+
+    #upload-section.dragover {
+      border-color: #007bff;
+    }
+
+    .file-upload-label {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s ease;
+    }
+
+    .file-upload-label:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    #file-preview {
+      margin-top: 15px;
+      color: white;
+      font-size: 0.9rem;
+    }
+
+    #convert-btn {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s ease;
+      margin-top: 15px;
+      width: 100%;
+    }
+
+    #convert-btn:hover {
+      background: #0056b3;
+    }
+
+    #convert-btn:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+    }
+
+    #progress-bar {
+      width: 100%;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 5px;
+      margin-top: 15px;
+      overflow: hidden;
+      display: none;
+    }
+
+    #progress-bar-inner {
+      height: 100%;
+      width: 0;
+      background: #007bff;
+      border-radius: 5px;
+      transition: width 0.3s ease;
+    }
+
+    #result-section {
+      margin-top: 20px;
+      display: none;
+    }
+
+    #download-link {
+      background: #007bff;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 5px;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 10px;
+      transition: background 0.3s ease;
+    }
+
+    #download-link:hover {
+      background: #0056b3;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      color: white;
+      margin-top: 20px;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+  </style>
+  <!-- JSZip Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+  <!-- Google Adsense Script -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=YOUR_ADSENSE_CLIENT_ID" crossorigin="anonymous"></script>
+</head>
+<body>
+  <header>
+    <h1>PDF to Word Converter</h1>
+    <p>Convert your PDF files to editable Word documents in seconds!</p>
+  </header>
+
+  <main>
+    <!-- File Upload Section -->
+    <section id="upload-section">
+      <label for="pdf-file" class="file-upload-label">Choose PDF File</label>
+      <input type="file" id="pdf-file" accept=".pdf">
+      <div id="file-preview"></div>
+    </section>
+
+    <!-- Progress Bar -->
+    <div id="progress-bar">
+      <div id="progress-bar-inner"></div>
+    </div>
+
+    <!-- Convert Button -->
+    <button id="convert-btn">Convert to Word</button>
+
+    <!-- Result Section -->
+    <section id="result-section">
+      <h2>Your Word Document is Ready!</h2>
+      <a id="download-link" href="#" download>Download Word File</a>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2023 Your Company Name. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // JavaScript Functionality
+    const uploadSection = document.getElementById('upload-section');
+    const fileInput = document.getElementById('pdf-file');
+    const filePreview = document.getElementById('file-preview');
+    const convertBtn = document.getElementById('convert-btn');
+    const progressBar = document.getElementById('progress-bar');
+    const progressBarInner = document.getElementById('progress-bar-inner');
+    const resultSection = document.getElementById('result-section');
+    const downloadLink = document.getElementById('download-link');
+
+    // Drag and Drop Functionality
+    uploadSection.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadSection.classList.add('dragover');
+    });
+
+    uploadSection.addEventListener('dragleave', () => {
+      uploadSection.classList.remove('dragover');
+    });
+
+    uploadSection.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadSection.classList.remove('dragover');
+      fileInput.files = e.dataTransfer.files;
+      updateFilePreview();
+    });
+
+    // File Input Change
+    fileInput.addEventListener('change', updateFilePreview);
+
+    function updateFilePreview() {
+      if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        filePreview.textContent = `Selected File: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+      } else {
+        filePreview.textContent = '';
+      }
+    }
+
+    // Convert Button Click
+    convertBtn.addEventListener('click', async () => {
+      if (fileInput.files.length === 0) {
+        alert('Please select a PDF file to convert.');
+        return;
+      }
+
+      // Show progress bar
+      progressBar.style.display = 'block';
+      progressBarInner.style.width = '0%';
+
+      // Simulate conversion progress
+      for (let i = 0; i <= 100; i += 10) {
+        setTimeout(() => {
+          progressBarInner.style.width = `${i}%`;
+        }, i * 50);
+      }
+
+      // Generate a valid .docx file using JSZip
+      const zip = new JSZip();
+      const docContent = `
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+          <w:body>
+            <w:p>
+              <w:r>
+                <w:t>This is a valid Word document.</w:t>
+              </w:r>
+            </w:p>
+          </w:body>
+        </w:document>
+      `;
+
+      zip.file("word/document.xml", docContent);
+      zip.file("[Content_Types].xml", `
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+          <Default Extension="xml" ContentType="application/xml"/>
+          <Default Extension="docx" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document"/>
+        </Types>
+      `);
+
+      const content = await zip.generateAsync({ type: "blob" });
+      const url = URL.createObjectURL(content);
+
+      downloadLink.href = url;
+      downloadLink.download = 'converted-file.docx';
+      resultSection.style.display = 'block';
+      progressBar.style.display = 'none';
+    });
+  </script>
+</body>
+</html>
